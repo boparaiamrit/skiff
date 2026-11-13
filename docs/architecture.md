@@ -2,29 +2,9 @@
 
 Skiff is three small programs that talk over `127.0.0.1`:
 
-```mermaid
-%%{init: {'theme':'dark','themeVariables':{'primaryColor':'#121a15','primaryBorderColor':'#3dd6ff','primaryTextColor':'#eef3ef','lineColor':'#a78bfa','fontFamily':'system-ui'}}}%%
-flowchart LR
-  subgraph APK["Skiff app (Android, Java)"]
-    UI["WebView UI<br/>chat · terminal · files · preview"]
-    AS["Assistant sheet<br/>(side button)"]
-    BB["Floating bubble"]
-    HS["Accessibility service<br/>+ phone tools"]
-  end
-  subgraph D["skiffd (Go, static arm64 binary)"]
-    API["HTTP + WebSocket API<br/>token-protected"]
-    MCP["MCP servers<br/>approve · phone"]
-  end
-  subgraph U["Ubuntu 24.04 via proot"]
-    CC["Claude Code<br/>(official, unmodified)"]
-  end
-  UI <--> API
-  AS <--> API
-  BB <--> API
-  API --> CC
-  CC <--> MCP
-  MCP -->|phone tools| HS
-```
+<p align="center">
+  <img src="assets/architecture.svg" width="560" alt="Skiff app talks to skiffd over a token-protected local API; skiffd runs Claude Code in Ubuntu and gives it phone tools through MCP">
+</p>
 
 ## The pieces
 

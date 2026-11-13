@@ -105,29 +105,9 @@ One card, one button. Your words appear as you speak; Claude works (shrinking to
 
 ## How it works
 
-```mermaid
-%%{init: {'theme':'dark','themeVariables':{'primaryColor':'#121a15','primaryBorderColor':'#3dd6ff','primaryTextColor':'#eef3ef','lineColor':'#a78bfa','fontFamily':'system-ui'}}}%%
-flowchart LR
-  subgraph APK["Skiff app"]
-    UI["Chat · Terminal · Files · Preview"]
-    AS["Side-button assistant"]
-    BB["Floating bubble"]
-    HS["Phone control"]
-  end
-  subgraph D["skiffd (Go)"]
-    API["Local API<br/>token-protected"]
-    MCP["MCP servers<br/>approve · phone"]
-  end
-  subgraph U["Ubuntu 24.04 (proot)"]
-    CC["Claude Code"]
-  end
-  UI <--> API
-  AS <--> API
-  BB <--> API
-  API --> CC
-  CC <--> MCP
-  MCP --> HS
-```
+<p align="center">
+  <img src="docs/assets/architecture.svg" width="560" alt="Skiff app talks to skiffd over a token-protected local API; skiffd runs Claude Code in Ubuntu and gives it phone tools through MCP">
+</p>
 
 * **skiffd** is a static Go binary inside the APK. It serves the UI, terminals, files and the chat bridge on `127.0.0.1`, guarded by a random per-launch token.
 * **Chat** drives Claude Code's documented stream-json mode. Permission prompts arrive through a small MCP server and become Allow / Deny cards.

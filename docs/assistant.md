@@ -18,21 +18,9 @@ phone's own recognizer, so voice typing elsewhere keeps working.
 
 ## How a turn goes
 
-```mermaid
-%%{init: {'theme':'dark','themeVariables':{'primaryColor':'#121a15','primaryBorderColor':'#3dd6ff','primaryTextColor':'#eef3ef','lineColor':'#a78bfa','fontFamily':'system-ui'}}}%%
-stateDiagram-v2
-  [*] --> Listening: side button
-  Listening --> Thinking: you stop talking / Done
-  Listening --> Idle: nothing said
-  Thinking --> Working: Claude uses the phone
-  Working --> Thinking
-  Thinking --> Speaking: answer
-  Working --> Speaking: answer
-  Speaking --> FollowUp: "Anything else?"
-  FollowUp --> Thinking: you speak
-  FollowUp --> [*]: silence, closes
-  Idle --> [*]: closes after a few seconds
-```
+<p align="center">
+  <img src="assets/assistant-turn.svg" width="560" alt="An assistant turn: listening, thinking, working on the phone, speaking, then a short follow-up">
+</p>
 
 * **One card, one button.** Your words appear as you speak; then what it is
   doing ("Searching the web…"); then the answer, read aloud.
