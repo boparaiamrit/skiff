@@ -1,6 +1,6 @@
 {
   "name": "skiff-web",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "private": true,
   "description": "Skiff's touch-first UI for Claude Code (Preact + htm), bundled by esbuild into server/dist.",
   "license": "MIT OR Apache-2.0",

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.5
+* Fixed garbled lines in code diffs (a style clash with the context meter).
+* Clearer approval questions in the assistant ("Can I edit a file?").
+* First public release on GitHub.
+
 ## 0.4.4: only your voice
 * While listening, Skiff takes Android's audio focus: music and videos pause
   and resume afterwards.
