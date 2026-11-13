@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Skiff as the phone's digital assistant (side button, assistant gesture). -->
+<voice-interaction-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:sessionService="com.navree.skiff.AssistSessionService"
+    android:recognitionService="com.navree.skiff.SpeechService"
+    android:settingsActivity="com.navree.skiff.MainActivity"
+    android:supportsAssist="true"
+    android:supportsLaunchVoiceAssistFromKeyguard="true"
+    android:supportsLocalInteraction="false" />

@@ -1,0 +1,130 @@
+#!/usr/bin/env python3
+# A stand-in for `claude -p --input-format stream-json --output-format stream-json`
+# used to test Skiff's chat plumbing without an Anthropic account. It emits
+# realistic events and asks for permission through the MCP server named in
+# --mcp-config, exactly as Claude Code does with --permission-prompt-tool.
+import json, os, subprocess, sys, time, uuid
+
+args = sys.argv[1:]
+if '-p' not in args:
+    print("fake claude: interactive mode is not simulated. Type exit.")
+    sys.stdin.readline()
+    sys.exit(0)
+
+def arg(name):
+    return args[args.index(name) + 1] if name in args else None
+
+sid = arg('--resume') or str(uuid.uuid4())
+mode = arg('--permission-mode') or 'default'
+# like the real Claude Code: refuse to skip permissions as root
+if (mode == 'bypassPermissions' or '--dangerously-skip-permissions' in args) and os.getuid() == 0:
+    sys.stderr.write("--dangerously-skip-permissions cannot be used with root/sudo privileges for security reasons\n")
+    sys.exit(1)
+mcp_cfg = json.load(open(arg('--mcp-config'))) if arg('--mcp-config') else None
+
+import re
+def tx(o):
+    d = os.path.join(os.environ.get('HOME', '/root'), '.claude', 'projects', re.sub('[^a-zA-Z0-9]', '-', os.getcwd()))
+    os.makedirs(d, exist_ok=True)
+    o = dict(o); o['cwd'] = os.getcwd(); o['sessionId'] = sid
+    open(os.path.join(d, sid + '.jsonl'), 'a').write(json.dumps(o) + "\n")
+
+def out(o):
+    if o.get('type') in ('user', 'assistant'):
+        tx({"type": o['type'], "message": o['message']})
+    sys.stdout.write(json.dumps(o) + "\n"); sys.stdout.flush()
+
+mcp = None
+def mcp_call(tool_name, tool_input):
+    global mcp
+    if mcp is None:
+        srv = mcp_cfg['mcpServers']['skiff']
+        env = dict(os.environ); env.update(srv.get('env', {}))
+        mcp = subprocess.Popen([srv['command']] + srv['args'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, env=env, text=True)
+        mcp.stdin.write(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2025-06-18"}}) + "\n"); mcp.stdin.flush()
+        mcp.stdout.readline()
+    mcp.stdin.write(json.dumps({"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "approve", "arguments": {"tool_name": tool_name, "input": tool_input, "tool_use_id": "toolu_x"}}}) + "\n"); mcp.stdin.flush()
+    resp = json.loads(mcp.stdout.readline())
+    return json.loads(resp['result']['content'][0]['text'])
+
+out({"type": "system", "subtype": "init", "session_id": sid, "model": "claude-fake uid=%d user=%s home=%s" % (os.getuid(), os.environ.get('USER'), os.environ.get('HOME')), "permissionMode": mode, "cwd": os.getcwd(), "tools": ["Read", "Edit", "Bash"]})
+for line in sys.stdin:
+    line = line.strip()
+    if not line:
+        continue
+    msg = json.loads(line)
+    if msg.get('type') == 'control_request':
+        out({"type": "control_response", "response": {"subtype": "success", "request_id": msg['request_id']}})
+        continue
+    text = ''.join(b.get('text', '') for b in msg['message']['content'] if b.get('type') == 'text')
+    tx({"type": "user", "message": {"role": "user", "content": text}})
+    mid = 'msg_' + uuid.uuid4().hex[:8]
+    if 'slow' in text.lower():
+        time.sleep(8)
+    if 'phone' in text.lower():
+        # like Claude Code: call the "phone" MCP server's tools; with
+        # --allowedTools mcp__phone no permission prompt is needed
+        allowed = arg('--allowedTools') or ''
+        srv = (mcp_cfg or {}).get('mcpServers', {}).get('phone')
+        if not srv or 'mcp__phone' not in allowed:
+            out({"type": "assistant", "session_id": sid, "parent_tool_use_id": None, "message": {"id": mid, "role": "assistant", "content": [{"type": "text", "text": "No phone tools (server=%s allowed=%s)" % (bool(srv), allowed)}]}})
+            out({"type": "result", "subtype": "success", "is_error": False, "duration_ms": 100, "num_turns": 1, "result": "no phone", "session_id": sid})
+            continue
+        env = dict(os.environ); env.update(srv.get('env', {}))
+        ph = subprocess.Popen([srv['command']] + srv['args'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, env=env, text=True)
+        def rpc(i, method, params):
+            ph.stdin.write(json.dumps({"jsonrpc": "2.0", "id": i, "method": method, "params": params}) + "\n"); ph.stdin.flush()
+            return json.loads(ph.stdout.readline())['result']
+        rpc(1, 'initialize', {"protocolVersion": "2025-06-18"})
+        names = [t['name'] for t in rpc(2, 'tools/list', {})['tools']]
+        steps = [("read_screen", {}), ("tap", {"text": "Send"}), ("screenshot", {}), ("set_alarm", {"hour": 6, "minute": 30, "label": "Gym"})]
+        for n, (tool, a) in enumerate(steps):
+            tid = "toolu_p%d" % n
+            out({"type": "assistant", "session_id": sid, "parent_tool_use_id": None, "message": {"id": mid, "role": "assistant", "content": [{"type": "tool_use", "id": tid, "name": "mcp__phone__" + tool, "input": a}]}})
+            r = rpc(10 + n, 'tools/call', {"name": tool, "arguments": a})
+            content = [({"type": "image", "source": {"type": "base64", "media_type": c["mimeType"], "data": c["data"]}} if c["type"] == "image" else c) for c in r["content"]]
+            out({"type": "user", "session_id": sid, "parent_tool_use_id": None, "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": tid, "content": content, "is_error": r.get("isError", False)}]}})
+        ph.stdin.close(); ph.wait()
+        final = "Done. Your alarm is set for 6:30 tomorrow morning, labelled Gym." if len(names) > 20 else "Phone tools are missing."
+        out({"type": "assistant", "session_id": sid, "parent_tool_use_id": None, "message": {"id": mid + 'p', "role": "assistant", "content": [{"type": "text", "text": final}]}})
+        out({"type": "result", "subtype": "success", "is_error": False, "duration_ms": 1500, "num_turns": 5, "result": final, "session_id": sid})
+        continue
+    if 'ask' in text.lower():
+        qs = {"questions": [
+            {"question": "What should happen to the LatticePHP repos?", "header": "Confirm", "multiSelect": False,
+             "options": [{"label": "Back up, then delete", "description": "Mirror-clone first"}, {"label": "Archive instead", "description": "Read-only, nothing deleted"}]},
+            {"question": "Which extras?", "header": "Extras", "multiSelect": True,
+             "options": [{"label": "README", "description": "Write a summary"}, {"label": "Tag release", "description": "v1-final"}]}]}
+        out({"type": "assistant", "session_id": sid, "parent_tool_use_id": None, "message": {"id": mid, "role": "assistant", "content": [{"type": "tool_use", "id": "toolu_q", "name": "AskUserQuestion", "input": qs}]}})
+        d = mcp_call("AskUserQuestion", qs)
+        ans = (d.get('updatedInput') or {}).get('answers') if d.get('behavior') == 'allow' else None
+        res = ("User has answered your questions: " + json.dumps(ans)) if ans else ("denied: " + d.get('message', ''))
+        out({"type": "user", "session_id": sid, "parent_tool_use_id": None, "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_q", "content": res}]}})
+        out({"type": "assistant", "session_id": sid, "parent_tool_use_id": None, "message": {"id": mid + 'q', "role": "assistant", "content": [{"type": "text", "text": "Got it: " + res}]}})
+        out({"type": "result", "subtype": "success", "is_error": False, "duration_ms": 900, "num_turns": 1, "result": res, "session_id": sid, "total_cost_usd": 0.001})
+        continue
+    out({"type": "stream_event", "session_id": sid, "event": {"type": "message_start", "message": {"id": mid}}})
+    out({"type": "stream_event", "session_id": sid, "event": {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}}})
+    reply = f"I'll look at the project and make a small change for: **{text}**.\n\nFirst, the files:"
+    for i in range(0, len(reply), 12):
+        out({"type": "stream_event", "session_id": sid, "event": {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": reply[i:i+12]}}})
+        time.sleep(0.03)
+    out({"type": "assistant", "session_id": sid, "parent_tool_use_id": None, "message": {"id": mid, "role": "assistant", "content": [{"type": "text", "text": reply}]}})
+    out({"type": "assistant", "session_id": sid, "parent_tool_use_id": None, "message": {"id": mid, "role": "assistant", "content": [{"type": "tool_use", "id": "toolu_1", "name": "Bash", "input": {"command": "ls -la", "description": "List files"}}]}})
+    listing = subprocess.run(['ls', '-la'], capture_output=True, text=True).stdout
+    out({"type": "user", "session_id": sid, "parent_tool_use_id": None, "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_1", "content": listing}]}})
+    out({"type": "assistant", "session_id": sid, "parent_tool_use_id": None, "message": {"id": mid, "role": "assistant", "content": [{"type": "tool_use", "id": "toolu_2", "name": "TodoWrite", "input": {"todos": [{"content": "Read the code", "status": "completed", "activeForm": "Reading"}, {"content": "Edit hello.txt", "status": "in_progress", "activeForm": "Editing hello.txt"}, {"content": "Run tests", "status": "pending", "activeForm": "Running tests"}]}}]}})
+    out({"type": "user", "session_id": sid, "parent_tool_use_id": None, "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_2", "content": "ok"}]}})
+    path = os.path.join(os.getcwd(), 'hello.txt')
+    edit = {"file_path": path, "old_string": "hello world\nline two\n", "new_string": "hello Skiff\nline two\nline three\n"}
+    out({"type": "assistant", "session_id": sid, "parent_tool_use_id": None, "message": {"id": mid, "role": "assistant", "content": [{"type": "tool_use", "id": "toolu_3", "name": "Edit", "input": edit}]}})
+    decision = mcp_call("Edit", edit) if mode not in ('acceptEdits', 'bypassPermissions') else {"behavior": "allow"}
+    if decision.get('behavior') == 'allow':
+        open(path, 'w').write(edit['new_string'])
+        out({"type": "user", "session_id": sid, "parent_tool_use_id": None, "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_3", "content": "The file has been updated."}]}})
+        final = "Done: `hello.txt` now greets Skiff."
+    else:
+        out({"type": "user", "session_id": sid, "parent_tool_use_id": None, "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_3", "is_error": True, "content": decision.get('message', 'denied')}]}})
+        final = "Okay, I won't change the file."
+    out({"type": "assistant", "session_id": sid, "parent_tool_use_id": None, "message": {"id": mid + 'b', "role": "assistant", "content": [{"type": "text", "text": final}], "usage": {"input_tokens": 1200, "cache_read_input_tokens": 61000, "cache_creation_input_tokens": 2000, "output_tokens": 300}}})
+    out({"type": "result", "subtype": "success", "is_error": False, "duration_ms": 4200, "num_turns": 3, "result": final, "session_id": sid, "total_cost_usd": 0.0123, "modelUsage": {"claude-fake": {"contextWindow": 200000}}})

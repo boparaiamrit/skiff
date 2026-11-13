@@ -1,0 +1,47 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  apk:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: server/go.mod
+          cache-dependency-path: server/go.sum
+
+      - name: Android build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends aapt dalvik-exchange zipalign apksigner
+
+      - name: Web UI
+        run: cd web && npm ci
+
+      - name: Vet
+        run: |
+          mkdir -p server/dist && touch server/dist/.keep
+          (cd web && node build.mjs)
+          cd server && go vet ./... && go test ./...
+
+      # Signed with a throwaway key: fine for testing, but it won't update an
+      # installed release (Android requires the same signing key).
+      - name: APK
+        run: ./build.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: skiff-apk-test-key
+          path: build/skiff.apk

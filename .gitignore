@@ -1,0 +1,10 @@
+build/
+keys/
+web/node_modules/
+server/dist/*
+!server/dist/.keep
+*.part
+android/sdk/
+.DS_Store
+*.apk
+*.zip

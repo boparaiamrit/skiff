@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="420" viewBox="0 0 1280 420" role="img" aria-label="Skiff: Claude Code in your pocket">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3dff8f"/>
+      <stop offset="0.55" stop-color="#3dd6ff"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="gt" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3dff8f"/>
+      <stop offset="0.5" stop-color="#3dd6ff"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0.18" cy="0.95" r="0.55">
+      <stop offset="0" stop-color="#3dff8f" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#3dff8f" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0.92" cy="0.05" r="0.6">
+      <stop offset="0" stop-color="#a78bfa" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#a78bfa" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowC" cx="0.55" cy="1.1" r="0.5">
+      <stop offset="0" stop-color="#3dd6ff" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#3dd6ff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+    <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r="1.2" fill="#ffffff" fill-opacity="0.05"/>
+    </pattern>
+  </defs>
+
+  <rect width="1280" height="420" fill="#0b0f0c"/>
+  <rect width="1280" height="420" fill="url(#dots)"/>
+  <rect width="1280" height="420" fill="url(#glowA)"/>
+  <rect width="1280" height="420" fill="url(#glowB)"/>
+  <rect width="1280" height="420" fill="url(#glowC)"/>
+
+  <!-- the orb: the app's ring with the Skiff sail inside -->
+  <g transform="translate(250 210)">
+    <circle r="112" fill="none" stroke="url(#g)" stroke-width="16" opacity="0.75" filter="url(#blur)"/>
+    <circle r="104" fill="#121a15"/>
+    <circle r="108" fill="none" stroke="url(#g)" stroke-width="9"/>
+    <!-- sail and hull -->
+    <path d="M-6 -62 L-6 34 L-58 34 Z" fill="url(#g)"/>
+    <path d="M6 -48 L6 34 L46 34 Z" fill="url(#g)" opacity="0.85"/>
+    <path d="M-68 46 H68 L50 70 H-50 Z" fill="#eef3ef"/>
+  </g>
+
+  <!-- words -->
+  <text x="420" y="178" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="104" font-weight="800" letter-spacing="-3" fill="url(#gt)">Skiff</text>
+  <text x="424" y="236" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="36" font-weight="600" fill="#eef3ef">Claude Code in your pocket.</text>
+  <text x="424" y="280" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="21" fill="#93a39a">A real Ubuntu, a touch-first agent UI, hands on your phone,</text>
+  <text x="424" y="308" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="21" fill="#93a39a">and a side-button assistant. One APK. No root.</text>
+
+  <!-- chips -->
+  <g font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#eef3ef">
+    <rect x="424" y="334" width="128" height="34" rx="17" fill="#121a15" stroke="url(#gt)" stroke-width="1.5"/>
+    <text x="488" y="356" text-anchor="middle">Android 11+</text>
+    <rect x="564" y="334" width="168" height="34" rx="17" fill="#121a15" stroke="url(#gt)" stroke-width="1.5"/>
+    <text x="648" y="356" text-anchor="middle">Runs Claude Code</text>
+    <rect x="744" y="334" width="128" height="34" rx="17" fill="#121a15" stroke="url(#gt)" stroke-width="1.5"/>
+    <text x="808" y="356" text-anchor="middle">Phone control</text>
+    <rect x="884" y="334" width="160" height="34" rx="17" fill="#121a15" stroke="url(#gt)" stroke-width="1.5"/>
+    <text x="964" y="356" text-anchor="middle">Voice assistant</text>
+  </g>
+</svg>

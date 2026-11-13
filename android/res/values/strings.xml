@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Skiff</string>
+    <string name="hands_summary">Lets Claude in Skiff use your phone when you ask</string>
+    <string name="hands_desc">When you ask Claude in Skiff to do something on your phone, this lets it read what is on screen and tap, type and scroll for you. It only acts on your requests, shows a banner with a Stop button while it works, and asks on screen before risky actions such as sending, paying or deleting. Banking and password apps always ask first.</string>
+</resources>
