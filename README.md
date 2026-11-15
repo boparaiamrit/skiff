@@ -10,6 +10,10 @@
 </p>
 
 <p align="center">
+  <a href="https://boparaiamrit.github.io/skiff/"><b>boparaiamrit.github.io/skiff</b></a>
+</p>
+
+<p align="center">
   <b>Skiff puts a real Ubuntu on your Android phone, installs the official Claude Code inside it,<br>
   and gives it a home made for thumbs.</b><br>
   A chat with tool cards and diffs, terminals, files and a preview pane. Hands that can use your phone.<br>
@@ -153,6 +157,22 @@ At setup Skiff downloads `proot` (GPL-2.0) and `libtalloc` (LGPL-3.0) from Termu
 
 Skiff is an independent project and is not affiliated with or endorsed by Anthropic. Claude and Claude Code are Anthropic's; Claude Code is installed from Anthropic and governed by Anthropic's terms. Security notes are in [SECURITY.md](SECURITY.md).
 
+## Part of Navree
+
+Skiff is part of **[Navree](https://navree.com)**, the complete application framework for Rust, built by the same author. Navree gives every application one clear structure: modules wired by dependency injection and checked when the app boots. Auth, workspaces, an ORM, queues, search, real time and AI are in the box. Screens are written in Rust with Navree UI, or in Next.js or Nuxt, and first-party tools handle monitoring (Lighthouse), admin (Helm), queues (Fleet) and deployment (Harbor). Every Navree app installs skills for AI coding agents with `navree skills:install`. Navree is free and open source, licensed MIT OR Apache-2.0.
+
+- Website: [navree.com](https://navree.com)
+- Source: [github.com/NavreeHQ/navree](https://github.com/NavreeHQ/navree)
+- Crates: [crates.io/crates/navree](https://crates.io/crates/navree)
+
+## Author
+
+Created by **Amritpal Singh**, founder of [Navree](https://navree.com): a serial entrepreneur and full-stack developer with fifteen years of building software, six startups and more than a hundred open-source packages.
+
+- Email: [boparaiamrit@gmail.com](mailto:boparaiamrit@gmail.com)
+- GitHub: [@boparaiamrit](https://github.com/boparaiamrit)
+- More from the author: [Superdev](https://boparaiamrit.github.io/superdev/), the Claude Code and Codex plugin that takes a product from a brief to a released app on Navree
+
 <p align="center">
-  <sub>Built by <a href="https://github.com/boparaiamrit">Amrit Boparai</a> · part of <a href="https://navree.com">Navree</a></sub>
+  <sub>Built by <a href="https://github.com/boparaiamrit">Amritpal Singh</a> (<a href="mailto:boparaiamrit@gmail.com">boparaiamrit@gmail.com</a>) · founder of <a href="https://navree.com">Navree</a> · <a href="https://boparaiamrit.github.io/skiff/">boparaiamrit.github.io/skiff</a></sub>
 </p>
