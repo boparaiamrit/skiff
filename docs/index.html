@@ -6,6 +6,7 @@
 <title>Skiff · Claude Code in your pocket</title>
 <meta name="description" content="Skiff puts a real Ubuntu on your Android phone, installs the official Claude Code inside it, and gives it a home made for thumbs. Chat, terminal, phone control and a side-button assistant. No root, no Termux, one APK.">
 <meta name="theme-color" content="#0b0f0c">
+<meta name="author" content="Amritpal Singh">
 <link rel="canonical" href="https://boparaiamrit.github.io/skiff/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Skiff · Claude Code in your pocket">
@@ -156,6 +157,20 @@ footer .wrap{display:grid;gap:14px}
 footer .row{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
 footer a{color:var(--muted)}
 
+
+/* navree */
+.nv{display:grid;grid-template-columns:1.25fr .75fr;gap:32px;border:1px solid var(--line);border-radius:28px;padding:44px;background:radial-gradient(600px 300px at 90% 0%,rgba(61,255,143,.10),transparent 70%),var(--bg2)}
+.nvlogo{display:flex;align-items:center;gap:12px;font-weight:800;font-size:28px;letter-spacing:-.02em;margin:0 0 12px}
+.nvlogo svg{width:38px;height:38px;color:var(--g1);filter:drop-shadow(0 0 10px rgba(61,255,143,.5))}
+.nv p{color:var(--muted);margin:0 0 12px;font-size:16px}
+.nvtags{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 24px}
+.nvtags span{font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);color:var(--text);background:var(--bg)}
+.founder{border:1px solid var(--line);border-radius:20px;padding:24px;background:var(--bg);align-self:start}
+.founder .who{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.founder img{width:54px;height:54px;border-radius:50%;border:2px solid var(--g2)}
+.founder h4{margin:0;font-size:18px}.founder small{color:var(--dim);font-size:13px}
+.founder p{font-size:14.5px}
+@media (max-width:1000px){.nv{grid-template-columns:1fr;padding:28px 20px}}
 @media (max-width:1000px){
   .grid{grid-template-columns:repeat(2,1fr)}
   .split,.start{grid-template-columns:1fr}
@@ -196,6 +211,7 @@ footer a{color:var(--muted)}
       <a href="#start">Get started</a>
       <a href="#how">How it works</a>
       <a href="#roadmap">Roadmap</a>
+      <a href="#navree">Navree</a>
     </nav>
     <a class="btn sm" href="https://github.com/boparaiamrit/skiff">
       <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
@@ -447,6 +463,33 @@ footer a{color:var(--muted)}
       </div>
     </div>
   </section>
+  <section id="navree" style="padding-top:20px">
+    <div class="wrap">
+      <div class="nv">
+        <div>
+          <p class="eyebrow">Part of Navree</p>
+          <div class="nvlogo"><svg viewBox="0 0 32 32"><path fill="currentColor" d="M1.5 9.5 L30.5 7 C29.6 9.4 28.6 11.3 27.4 12.7 L3.4 12.7 C2.6 11.8 2 10.8 1.5 9.5Z"/><path fill="currentColor" d="M4.4 14.5 L26 14.5 C24.4 16.5 22.4 17.8 19.5 18.3 L10 18.3 C7.6 17.8 5.8 16.5 4.4 14.5Z"/><path fill="currentColor" d="M13 18.3H19.4L16.4 26H14.4Z"/></svg>navree</div>
+          <p style="color:var(--text);font-size:18px">The complete application framework for Rust.</p>
+          <p>Skiff is part of Navree. Navree gives every application one clear structure: modules wired by dependency injection and checked when the app boots. Auth, workspaces, an ORM, queues, search, real time and AI are in the box. Screens are written in Rust with Navree UI, or in Next.js or Nuxt, with first-party tools for monitoring, admin and deployment.</p>
+          <p>Free and open source, MIT OR Apache-2.0, and made to be built with AI agents: every app installs Navree's skills with <code>navree skills:install</code>.</p>
+          <div class="nvtags"><span>Modules + DI</span><span>Navree UI</span><span>ORM</span><span>Auth &amp; workspaces</span><span>Queues</span><span>Real time</span><span>AI SDK</span><span>MCP</span></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <a class="btn primary" href="https://navree.com">navree.com</a>
+            <a class="btn" href="https://github.com/NavreeHQ/navree">NavreeHQ/navree</a>
+            <a class="btn" href="https://boparaiamrit.github.io/superdev/">Superdev</a>
+          </div>
+        </div>
+        <div class="founder">
+          <div class="who"><img src="https://github.com/boparaiamrit.png?size=108" alt="" width="54" height="54"><div><h4>Amritpal Singh</h4><small>Founder of Navree · author of Skiff</small></div></div>
+          <p>A serial entrepreneur and full-stack developer: fifteen years of building software, six startups, and more than a hundred open-source packages. Navree holds what those years taught him.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+            <a class="btn sm" href="mailto:boparaiamrit@gmail.com">boparaiamrit@gmail.com</a>
+            <a class="btn sm" href="https://github.com/boparaiamrit">@boparaiamrit</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -461,7 +504,7 @@ footer a{color:var(--muted)}
     </div>
     <div>Skiff's own code is dual-licensed MIT OR Apache-2.0. At setup Skiff downloads proot (GPL-2.0) and libtalloc (LGPL-3.0) from Termux's package repository and Ubuntu from Canonical; they are not bundled in the APK.</div>
     <div>Skiff is an independent project and is not affiliated with or endorsed by Anthropic. Claude and Claude Code are Anthropic's; Claude Code is installed from Anthropic and governed by Anthropic's terms.</div>
-    <div>Built by Amrit Boparai · part of Navree</div>
+    <div>Built by <a href="https://github.com/boparaiamrit">Amritpal Singh</a> (<a href="mailto:boparaiamrit@gmail.com">boparaiamrit@gmail.com</a>), founder of <a href="https://navree.com">Navree</a>, the complete application framework for Rust. · <a href="https://boparaiamrit.github.io/superdev/">Superdev</a></div>
   </div>
 </footer>
 </body>
